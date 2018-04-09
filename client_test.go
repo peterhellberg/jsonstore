@@ -80,23 +80,65 @@ func TestNewSecret(t *testing.T) {
 	}
 }
 
-func TestGet(t *testing.T) {
-	ctx := context.Background()
+func TestURL(t *testing.T) {
+	s := NewSecret()
+	c := New(Secret(s), BaseURL("https://example.org"))
 
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	want := "https://example.org/" + s + "/foo/bar"
+
+	if got := c.URL("foo", "bar").String(); got != want {
+		t.Fatalf(`c.URL("foo", "bar").String() = %q, want %q`, got, want)
+	}
+}
+
+func TestGet(t *testing.T) {
+	c, ts := testClientAndServer(func(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]int{
 			"result": 6543,
 		})
-	}))
+	})
 	defer ts.Close()
-
-	c := New(BaseURL(ts.URL))
 
 	var v int
 
-	c.Get(ctx, "", &v)
+	c.Get(context.Background(), "", &v)
 
 	if got, want := v, 6543; got != want {
 		t.Fatalf(`v = %d, want %d`, got, want)
 	}
+}
+
+func TestPost(t *testing.T) {
+	c, ts := testClientAndServer(func(w http.ResponseWriter, r *http.Request) {
+	})
+	defer ts.Close()
+
+	if err := c.Post(context.Background(), "test", nil); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+func TestPut(t *testing.T) {
+	c, ts := testClientAndServer(func(w http.ResponseWriter, r *http.Request) {
+	})
+	defer ts.Close()
+
+	if err := c.Put(context.Background(), "test", nil); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+func TestDelete(t *testing.T) {
+	c, ts := testClientAndServer(func(w http.ResponseWriter, r *http.Request) {
+	})
+	defer ts.Close()
+
+	if err := c.Delete(context.Background(), "test"); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+func testClientAndServer(h http.HandlerFunc, options ...Option) (*Client, *httptest.Server) {
+	ts := httptest.NewServer(h)
+	return New(append(options, BaseURL(ts.URL))...), ts
 }
