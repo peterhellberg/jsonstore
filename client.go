@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -146,7 +147,7 @@ func (c *Client) Delete(ctx context.Context, path string) error {
 }
 
 func (c *Client) request(ctx context.Context, method, path string, body io.Reader) (*http.Request, error) {
-	rel, err := url.Parse("/" + c.secret + path)
+	rel, err := url.Parse("/" + c.secret + "/" + strings.TrimPrefix(path, "/"))
 	if err != nil {
 		return nil, err
 	}
