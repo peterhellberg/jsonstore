@@ -1,6 +1,6 @@
 /*
 
-Package jsonstore is a client for the www.jsonstore.io API
+Package jsonstore is a client for the https://www.jsonstore.io API
 
 Installation
 
