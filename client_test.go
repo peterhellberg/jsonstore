@@ -85,18 +85,18 @@ func TestGet(t *testing.T) {
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]int{
-			"test": 6543,
+			"result": 6543,
 		})
 	}))
 	defer ts.Close()
 
 	c := New(BaseURL(ts.URL))
 
-	v := map[string]int{}
+	var v int
 
 	c.Get(ctx, "", &v)
 
-	if got, want := v["test"], 6543; got != want {
-		t.Fatalf(`v["test"] = %d, want %d`, got, want)
+	if got, want := v, 6543; got != want {
+		t.Fatalf(`v = %d, want %d`, got, want)
 	}
 }

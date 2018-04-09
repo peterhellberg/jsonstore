@@ -197,7 +197,7 @@ func (c *Client) do(req *http.Request, v interface{}) error {
 	}
 
 	if v != nil {
-		return json.NewDecoder(resp.Body).Decode(v)
+		return json.NewDecoder(resp.Body).Decode(&response{v})
 	}
 
 	return nil
@@ -205,4 +205,8 @@ func (c *Client) do(req *http.Request, v interface{}) error {
 
 func sha256sum(s string) string {
 	return fmt.Sprintf("%x", sha256.Sum256([]byte(s)))
+}
+
+type response struct {
+	Result interface{} `json:"result"`
 }
