@@ -4,7 +4,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/peterhellberg/jsonstore)](https://goreportcard.com/report/github.com/peterhellberg/jsonstore)
 [![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://godoc.org/github.com/peterhellberg/jsonstore)
 
-A client for the <https://www.jsonstore.io> API
+A client for the <https://www.jsonstore.io> API (backend source code is available at <https://github.com/bluzi/jsonstore>)
 
 ## Installation
 
