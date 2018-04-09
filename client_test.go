@@ -72,6 +72,14 @@ func TestNew(t *testing.T) {
 	})
 }
 
+func TestNewSecret(t *testing.T) {
+	secret := NewSecret()
+
+	if got, want := len(secret), 64; got != want {
+		t.Fatalf("len(secret) = %d, want %d", got, want)
+	}
+}
+
 func TestGet(t *testing.T) {
 	ctx := context.Background()
 

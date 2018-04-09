@@ -55,9 +55,8 @@ func New(options ...Option) *Client {
 		option(c)
 	}
 
-	// Generate a new secret if empty, based on the current time
 	if c.secret == "" {
-		c.secret = sha256sum(time.Now().Format(time.RFC3339Nano))
+		c.secret = NewSecret()
 	}
 
 	return c
@@ -84,6 +83,11 @@ func Secret(s string) Option {
 	return func(c *Client) {
 		c.secret = s
 	}
+}
+
+// NewSecret generates a new secret based on the current time
+func NewSecret() string {
+	return sha256sum(time.Now().Format(time.RFC3339Nano))
 }
 
 // Secret returns the client secret
