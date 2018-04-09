@@ -72,6 +72,19 @@ func TestNew(t *testing.T) {
 	})
 }
 
+func TestSecret(t *testing.T) {
+	s, err := NewSecret()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	c := New(Secret(s))
+
+	if got, want := c.Secret(), s; got != want {
+		t.Fatalf("c.Secret() = %q, want %q", got, want)
+	}
+}
+
 func TestURL(t *testing.T) {
 	s, err := NewSecret()
 	if err != nil {
