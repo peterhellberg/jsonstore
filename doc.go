@@ -4,9 +4,7 @@ Package jsonstore is a client for the www.jsonstore.io API
 
 Installation
 
-Just go get the package:
-
-go get -u github.com/peterhellberg/jsonstore
+    go get -u github.com/peterhellberg/jsonstore
 
 Usage
 
