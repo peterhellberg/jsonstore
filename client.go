@@ -96,6 +96,13 @@ func (c *Client) Secret() string {
 	return c.secret
 }
 
+// URL returns the URL used by the client
+func (c *Client) URL(segments ...string) *url.URL {
+	return c.baseURL.ResolveReference(&url.URL{
+		Path: "/" + c.secret + "/" + strings.TrimPrefix(strings.Join(segments, "/"), "/"),
+	})
+}
+
 // Get response from jsonstore
 func (c *Client) Get(ctx context.Context, path string, v interface{}) error {
 	req, err := c.request(ctx, http.MethodGet, path, nil)
