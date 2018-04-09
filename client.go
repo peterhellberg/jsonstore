@@ -35,8 +35,11 @@ type Client struct {
 	secret     string
 }
 
+// Option is a type of function used to configure the client
+type Option func(*Client)
+
 // New creates a www.jsonstore.io Client
-func New(options ...func(*Client)) *Client {
+func New(options ...Option) *Client {
 	c := &Client{
 		httpClient: &http.Client{
 			Timeout: defaultTimeout,
@@ -61,14 +64,14 @@ func New(options ...func(*Client)) *Client {
 }
 
 // HTTPClient changes the HTTP client used by the client to the provided *http.Client
-func HTTPClient(hc *http.Client) func(*Client) {
+func HTTPClient(hc *http.Client) Option {
 	return func(c *Client) {
 		c.httpClient = hc
 	}
 }
 
 // BaseURL changes the base URL used by the client to the URL parsed from rawurl
-func BaseURL(rawurl string) func(*Client) {
+func BaseURL(rawurl string) Option {
 	return func(c *Client) {
 		if u, err := url.Parse(rawurl); err == nil {
 			c.baseURL = u
@@ -77,7 +80,7 @@ func BaseURL(rawurl string) func(*Client) {
 }
 
 // Secret sets the secret used by the client to the provided string
-func Secret(s string) func(*Client) {
+func Secret(s string) Option {
 	return func(c *Client) {
 		c.secret = s
 	}
