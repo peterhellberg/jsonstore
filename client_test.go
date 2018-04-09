@@ -27,9 +27,9 @@ func TestNew(t *testing.T) {
 
 	t.Run("HTTPClient", func(t *testing.T) {
 		for _, hc := range []*http.Client{
-			&http.Client{Timeout: 1},
-			&http.Client{Timeout: 2},
-			&http.Client{Timeout: 3},
+			{Timeout: 1},
+			{Timeout: 2},
+			{Timeout: 3},
 		} {
 			c := New(HTTPClient(hc))
 
