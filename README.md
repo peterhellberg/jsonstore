@@ -3,8 +3,6 @@
 [![Build Status](https://travis-ci.org/peterhellberg/jsonstore.svg?branch=master)](https://travis-ci.org/peterhellberg/jsonstore)
 [![Go Report Card](https://goreportcard.com/badge/github.com/peterhellberg/jsonstore)](https://goreportcard.com/report/github.com/peterhellberg/jsonstore)
 [![GoDoc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat)](https://godoc.org/github.com/peterhellberg/jsonstore)
-[![License MIT](https://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)](https://github.com/peterhellberg/jsonstore#license-mit)
-
 
 A client for the <https://www.jsonstore.io> API
 
