@@ -19,26 +19,26 @@ Usage
 
     const secret = "3ba7860f742fc15d5b6e1508e2de1e0cde2c396f7c52a877905befb4e970eaaf"
 
+    type example struct {
+    	Number int
+    	Bool   bool
+    	String string
+    }
+
     func main() {
     	ctx := context.Background()
 
     	store := jsonstore.New(jsonstore.Secret(secret))
 
-    	store.Post(ctx, "example", map[string]interface{}{
-    		"number":  1234,
-    		"boolean": true,
-    		"string":  "example",
-    	})
+    	store.Post(ctx, "key", example{1234, true, "initial"})
+    	store.Put(ctx, "key/String", "modified")
+    	store.Delete(ctx, "key/Bool")
 
-    	store.Put(ctx, "example/string", "modified")
+    	var e example
 
-    	store.Delete(ctx, "example/boolean")
+    	store.Get(ctx, "key", &e)
 
-    	var resp map[string]interface{}
-
-    	store.Get(ctx, "/", &resp)
-
-    	fmt.Printf("https://www.jsonstore.io/%s/ -> %+v\n", secret, resp)
+    	fmt.Printf("%s -> %+v\n", store.URL("key"), e)
     }
 
 */
