@@ -3,7 +3,6 @@ package jsonstore
 import (
 	"bytes"
 	"context"
-	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -16,6 +15,7 @@ import (
 
 // Errors
 var (
+	ErrNoSecret            = fmt.Errorf("no secret")
 	ErrNotFound            = fmt.Errorf("not found")
 	ErrInternalServerError = fmt.Errorf("internal server error")
 	ErrUnexpectedStatus    = fmt.Errorf("unexpected status")
@@ -57,7 +57,9 @@ func New(options ...Option) *Client {
 	}
 
 	if c.secret == "" {
-		c.secret = NewSecret()
+		if s, err := NewSecret(); err == nil {
+			c.secret = s
+		}
 	}
 
 	return c
@@ -84,11 +86,6 @@ func Secret(s string) Option {
 	return func(c *Client) {
 		c.secret = s
 	}
-}
-
-// NewSecret generates a new secret based on the current time
-func NewSecret() string {
-	return sha256sum(time.Now().Format(time.RFC3339Nano))
 }
 
 // Secret returns the client secret
@@ -154,6 +151,10 @@ func (c *Client) Delete(ctx context.Context, path string) error {
 }
 
 func (c *Client) request(ctx context.Context, method, path string, body io.Reader) (*http.Request, error) {
+	if c.secret == "" {
+		return nil, ErrNoSecret
+	}
+
 	rel, err := url.Parse("/" + c.secret + "/" + strings.TrimPrefix(path, "/"))
 	if err != nil {
 		return nil, err
@@ -201,10 +202,6 @@ func (c *Client) do(req *http.Request, v interface{}) error {
 	}
 
 	return nil
-}
-
-func sha256sum(s string) string {
-	return fmt.Sprintf("%x", sha256.Sum256([]byte(s)))
 }
 
 type response struct {

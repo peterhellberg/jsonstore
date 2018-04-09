@@ -72,16 +72,12 @@ func TestNew(t *testing.T) {
 	})
 }
 
-func TestNewSecret(t *testing.T) {
-	secret := NewSecret()
-
-	if got, want := len(secret), 64; got != want {
-		t.Fatalf("len(secret) = %d, want %d", got, want)
-	}
-}
-
 func TestURL(t *testing.T) {
-	s := NewSecret()
+	s, err := NewSecret()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
 	c := New(Secret(s), BaseURL("https://example.org"))
 
 	want := "https://example.org/" + s + "/foo/bar"
