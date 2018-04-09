@@ -1,0 +1,14 @@
+language: go
+
+go:
+  - "1.10.1"
+  - "1.9.5"
+
+sudo: false
+
+install:
+  - echo "nothing to install"
+
+script:
+  - go vet ./...
+  - go test ./...
