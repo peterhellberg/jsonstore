@@ -147,6 +147,16 @@ func TestDelete(t *testing.T) {
 	}
 }
 
+func TestRequest(t *testing.T) {
+	t.Run("with no secret", func(t *testing.T) {
+		c := &Client{}
+
+		if _, err := c.request(context.Background(), "", "", nil); err != ErrNoSecret {
+			t.Fatalf("expected ErrNoSecret, got %v", err)
+		}
+	})
+}
+
 func testClientAndServer(h http.HandlerFunc, options ...Option) (*Client, *httptest.Server) {
 	ts := httptest.NewServer(h)
 	return New(append(options, BaseURL(ts.URL))...), ts
