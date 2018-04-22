@@ -101,20 +101,55 @@ func TestURL(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
-	c, ts := testClientAndServer(func(w http.ResponseWriter, r *http.Request) {
-		json.NewEncoder(w).Encode(map[string]int{
-			"result": 6543,
+	t.Run("OK", func(t *testing.T) {
+		c, ts := testClientAndServer(func(w http.ResponseWriter, r *http.Request) {
+			json.NewEncoder(w).Encode(map[string]int{
+				"result": 6543,
+			})
 		})
+		defer ts.Close()
+
+		var v int
+
+		c.Get(context.Background(), "", &v)
+
+		if got, want := v, 6543; got != want {
+			t.Fatalf(`v = %d, want %d`, got, want)
+		}
 	})
-	defer ts.Close()
 
-	var v int
+	t.Run("Not Found", func(t *testing.T) {
+		c, ts := testClientAndServer(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusNotFound)
+		})
+		defer ts.Close()
 
-	c.Get(context.Background(), "", &v)
+		if err := c.Get(context.Background(), "", nil); err != ErrNotFound {
+			t.Fatalf("expected ErrNotFound, got %v", err)
+		}
+	})
 
-	if got, want := v, 6543; got != want {
-		t.Fatalf(`v = %d, want %d`, got, want)
-	}
+	t.Run("Internal Server Error", func(t *testing.T) {
+		c, ts := testClientAndServer(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusInternalServerError)
+		})
+		defer ts.Close()
+
+		if err := c.Get(context.Background(), "", nil); err != ErrInternalServerError {
+			t.Fatalf("expected ErrInternalServerError, got %v", err)
+		}
+	})
+
+	t.Run("Unexpected", func(t *testing.T) {
+		c, ts := testClientAndServer(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusTeapot)
+		})
+		defer ts.Close()
+
+		if err := c.Get(context.Background(), "", nil); err != ErrUnexpectedStatus {
+			t.Fatalf("expected ErrUnexpectedStatus, got %v", err)
+		}
+	})
 }
 
 func TestPost(t *testing.T) {
