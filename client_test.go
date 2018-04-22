@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 )
 
@@ -188,6 +189,19 @@ func TestRequest(t *testing.T) {
 
 		if _, err := c.request(context.Background(), "", "", nil); err != ErrNoSecret {
 			t.Fatalf("expected ErrNoSecret, got %v", err)
+		}
+	})
+
+	t.Run("with invalid method", func(t *testing.T) {
+		c := &Client{secret: "foo", baseURL: &url.URL{Host: "localhost"}}
+
+		_, err := c.request(context.Background(), " ", "", nil)
+		if err == nil {
+			t.Fatalf("expected error to not be nil")
+		}
+
+		if got, want := err.Error(), `net/http: invalid method " "`; got != want {
+			t.Fatalf("err.Error() = %q, want %q", got, want)
 		}
 	})
 }
